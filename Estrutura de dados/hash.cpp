@@ -35,6 +35,11 @@ using namespace std;
     void Hash::inserir(Aluno aluno)
     {
         int local = FuncaoHash(aluno);
+        while (estrutura[local].obterRa() > 0)
+        {
+            local = (local+1) % max_posicoes;
+        }
+        
         estrutura[local] = aluno;
         quant_itens++;
     }
@@ -42,24 +47,39 @@ using namespace std;
     void Hash::deletar(Aluno aluno)
     {
         int local = FuncaoHash(aluno);
-        if (estrutura[local].obterRa() != -1)
+        bool verifyDelete = false;
+        while (estrutura[local].obterRa() != -1)
         {
-            estrutura[local] = Aluno(-1, " ");
-            quant_itens--;
+            if (estrutura[local].obterRa() == aluno.obterRa())
+            {
+                estrutura[local] = Aluno(-1, " ");
+                quant_itens--;
+                verifyDelete = true;
+            }
+
+            local = (local+1) % max_posicoes;
         }
+
+        if (!verifyDelete)
+        {
+            cout << "Elemento nao encontrado.\n";
+        }        
     }
     
     void Hash::buscar(Aluno& aluno, bool& busca)
     {
         int local = FuncaoHash(aluno);
-        Aluno aux = estrutura[local];
-
-        if (aluno.obterRa() != aux.obterRa())
+        busca = false;
+        while (estrutura[local].obterRa() != -1)
         {
-            busca = false;
-        }else{
-            busca = true;
-            aluno = aux;
+            if (estrutura[local].obterRa() == aluno.obterRa())
+            {
+                busca = true;
+                aluno = estrutura[local];
+                break;
+            }
+
+            local = (local+1) % max_posicoes;
         }
     }
     
